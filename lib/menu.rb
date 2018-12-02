@@ -35,13 +35,11 @@ class Menu
   end
 
   def see_hand(obj)
-    if obj.name == "Dealer"
-      puts "Карт в руке диллера: #{'*' * @dealer.hand.size}."
-    else
-      cards = []
-      @player.hand.each { |card| cards << [card.val + card.suit] }
-      puts "#{@player.name}, у вас в руке: #{cards.join(", ")}."
-    end
+    return puts "Карт в руке диллера: #{'*' * obj.hand.size}." if obj.name == "Dealer"
+    
+    cards = []
+    obj.hand.each { |card| cards << [card.val + card.suit] }
+    puts "#{obj.name}, у вас в руке: #{cards.join(", ")}."
   end
 
   def see_score
