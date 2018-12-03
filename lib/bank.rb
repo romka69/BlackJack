@@ -1,16 +1,15 @@
 class Bank
-
-  attr_reader :bank
+  attr_reader :quantity
 
   def initialize(val)
-    @bank = val
+    @quantity = val
   end
 
   def minus(val)
-    @bank -= val
+    @quantity -= val
   end
 
   def plus(val)
-    @bank += val
-  end  
+    @quantity += val
+  end
 end
