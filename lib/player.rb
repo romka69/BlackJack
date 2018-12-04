@@ -1,46 +1,57 @@
 require_relative 'bank'
+require_relative 'hand'
 
 class Player
-  VAL_BET = 10
-  VAL_WIN_BET = VAL_BET * 2
+  BET = 10
+  WIN_BET = BET * 2
 
-  attr_accessor :score
   attr_reader :name, :bank, :hand
 
   def initialize(name)
     @name = name
     @bank = Bank.new(100)
-    @hand = []
-    @score = 0
+    @hand = Hand.new
     validate!
   end
 
   def place_bet
-    @bank.minus(VAL_BET)
+    @bank.minus(BET)
   end
 
   def bet_back
-    @bank.plus(VAL_BET)
+    @bank.plus(BET)
   end
 
   def take_win_bet
-    @bank.plus(VAL_WIN_BET)
+    @bank.plus(WIN_BET)
   end
 
   def take_card(card)
-    @hand << card
+    @hand.take_card(card)
   end
 
   def clear_hand
-    @hand = []
+    @hand.clear_hand
   end
 
   def add_card?
-    return true if @hand.size < 3
+    @hand.add_card?
   end
 
   def good_score?
-    return true if @score < 22
+    @hand.good_score?
+  end
+
+  def count_score
+    @hand.count_score
+  end
+
+  def score
+    @hand.score
+  end
+
+  def see_cards
+    @hand.cards_in_line
   end
 
   def validate!

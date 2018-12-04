@@ -26,8 +26,8 @@ class Menu
     2.times { take_card(@dealer) }
     see_hand(@player)
     see_hand(@dealer)
-    count_score(@player)
-    count_score(@dealer)
+    @player.count_score
+    @dealer.count_score
     see_score(@player)
     @player.place_bet
     @dealer.place_bet
@@ -40,25 +40,9 @@ class Menu
   end
 
   def see_hand(person, open = false)
-    return puts "В руке '#{@dealer.name}': #{'*' * person.hand.size}." if person.name == "Dealer" && open == false
+    return puts "В руке '#{@dealer.name}': #{'*' * @dealer.hand.cards.size}." if person.name == "Dealer" && open == false
 
-    cards = []
-    person.hand.each { |card| cards << [card.val + card.suit] }
-    puts "В руке '#{person.name}': #{cards.join(', ')}."
-  end
-
-  def count_score(person)
-    score = []
-    ace = false
-
-    person.hand.each do |card|
-      score << card.score_card.to_i
-      ace = true if card.ace?
-    end
-
-    person_score = score.sum
-    person_score -= 10 if ace && score.sum > 21
-    person.score = person_score
+    puts "В руке '#{person.name}': #{person.see_cards}."
   end
 
   def see_score(person)
@@ -89,7 +73,7 @@ class Menu
   def dealer_move
     if @dealer.add_card?
       take_card(@dealer)
-      count_score(@dealer)
+      @dealer.count_score
       see_hand(@dealer)
       user_move
     end
@@ -102,7 +86,7 @@ class Menu
     return unless @player.add_card?
 
     take_card(@player)
-    count_score(@player)
+    @player.count_score
     see_hand(@player)
     dealer_move
   end
@@ -116,10 +100,7 @@ class Menu
   end
 
   def discover_winner
-    if !@player.good_score?
-      @dealer.take_win_bet
-      puts_winner(@dealer)
-    elsif @player.score > @dealer.score && @player.good_score?
+    if @player.score > @dealer.score && @player.good_score?
       @player.take_win_bet
       puts_winner(@player)
     elsif @dealer.score > @player.score && @dealer.good_score?
@@ -167,7 +148,7 @@ class Menu
       looser = @dealer.name
     end
 
-    puts "У '#{looser}' закончились деньги. Выход из игры."
+    puts "'#{looser}' ПРОИГРАЛ, закончились деньги. Выход из игры."
     exit
   end
 

@@ -9,7 +9,7 @@ class Card
   def score_card
     return 10 if %w[J Q K].include?(@val)
     return 11 if 'A'.include?(@val)
-    return @val if @val.to_i.class == Integer
+    return @val.to_i if @val.to_i.class == Integer
   end
 
   def ace?
