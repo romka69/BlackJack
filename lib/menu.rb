@@ -7,25 +7,34 @@ class Menu
   def initialize
     @interface = Interface.new
     @interface.hello_message
-    @deck = Deck.new
     @player = Player.new(@interface.input_name)
     @dealer = Dealer.new("Dealer")
     new_game
   end
 
   def new_game
+    loop do
+      preparating_new_game
+
+      2.times { take_card(@player) }
+      2.times { take_card(@dealer) }
+      see_hand(@player)
+      see_hand(@dealer)
+      @player.count_score
+      @dealer.count_score
+      see_score(@player)
+      @player.place_bet
+      @dealer.place_bet
+
+      user_move
+    end
+  end
+
+  def preparating_new_game
+    @deck = Deck.new
+    @next_round = false
     @interface.round_message
     @deck.shuffle_deck
-    2.times { take_card(@player) }
-    2.times { take_card(@dealer) }
-    see_hand(@player)
-    see_hand(@dealer)
-    @player.count_score
-    @dealer.count_score
-    see_score(@player)
-    @player.place_bet
-    @dealer.place_bet
-    user_move
   end
 
   def take_card(name)
@@ -45,6 +54,8 @@ class Menu
 
   def user_move
     loop do
+      break if @next_round
+
       choise = @interface.user_move_menu(@player.name, @player.add_card?)
 
       case choise
@@ -82,39 +93,55 @@ class Menu
     see_score(@dealer)
     see_hand(@player)
     see_score(@player)
-    discover_winner
+    search_winner
+    next_round
   end
 
-  def discover_winner
-    if @player.score > @dealer.score && @player.good_score?
-      @player.take_win_bet
-      @interface.see_winner(@player.name, @player.bank.quantity)
-    elsif @dealer.score > @player.score && @dealer.good_score?
-      @dealer.take_win_bet
-      @interface.see_winner(@dealer.name, @dealer.bank.quantity)
-    elsif @player.score == @dealer.score && @player.good_score?
+  def search_winner
+    winner = discover_winner
+
+    case winner
+    when :no_winner
+      @interface.see_two_loosers
+    when :draw
       @player.bet_back
       @dealer.bet_back
       @interface.see_draw
-    else
-      @interface.see_two_loosers
+    when :player
+      @player.take_win_bet
+      @interface.see_winner(@player.name, @player.bank.quantity)
+    when :dealer
+      @dealer.take_win_bet
+      @interface.see_winner(@dealer.name, @dealer.bank.quantity)
     end
+  end
 
-    next_round
+  def discover_winner
+    return :no_winner unless @player.good_score? && @dealer.good_score?
+
+    return :draw if @player.score == @dealer.score
+
+    return :player if @player.score > @dealer.score && @player.good_score?
+
+    return :dealer if @dealer.score > @player.score && @dealer.good_score?
+
+    return :dealer unless @player.good_score?
+
+    return :player unless dealer.good_score?
   end
 
   def next_round
     return empty_bank if @player.bank.quantity.zero? || @dealer.bank.quantity.zero?
 
-    loop do
-      choice = @interface.next_game_menu(@player.name)
+    choice = @interface.next_game_menu(@player.name)
 
-      case choice
-      when 1 then new_round
-      when 2 then exit
-      else
-        @interface.wrong_number_menu
-      end
+    case choice
+    when 1
+      @player.clear_hand
+      @dealer.clear_hand
+      @next_round = true
+    else
+      exit
     end
   end
 
@@ -127,11 +154,5 @@ class Menu
 
     @interface.see_looser(looser)
     exit
-  end
-
-  def new_round
-    @player.clear_hand
-    @dealer.clear_hand
-    new_game
   end
 end

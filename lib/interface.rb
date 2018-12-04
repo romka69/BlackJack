@@ -52,8 +52,9 @@ class Interface
 
   def next_game_menu(name)
     puts "----- #{name}, сыграем еще? -----"
+    puts "Введите согласно меню:"
     puts "1. Да"
-    puts "2. Нет/Выход из игры"
+    puts "Любой символ - Нет/Выход из игры"
     gets.chomp.to_i
   end
 
