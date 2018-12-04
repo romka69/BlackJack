@@ -64,12 +64,9 @@ class Menu
     if @dealer.add_card?
       take_card(@dealer)
       @dealer.count_score
-      see_hand(@dealer)
-      user_move
     end
 
     see_hand(@dealer)
-    user_move
   end
 
   def add_card
@@ -78,7 +75,6 @@ class Menu
     take_card(@player)
     @player.count_score
     see_hand(@player)
-    dealer_move
   end
 
   def open_cards
