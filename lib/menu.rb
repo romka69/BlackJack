@@ -1,26 +1,20 @@
+require_relative 'interface'
 require_relative 'deck'
 require_relative 'player'
 require_relative 'dealer'
 
 class Menu
   def initialize
-    puts "Добро пожаловать в игру Black Jack ver.TN!"
+    @interface = Interface.new
+    @interface.hello_message
     @deck = Deck.new
-    @player = Player.new(input_name)
+    @player = Player.new(@interface.input_name)
     @dealer = Dealer.new("Dealer")
     new_game
   end
 
-  def input_name
-    print "Введите ваше имя: "
-    name = gets.chomp.to_s.capitalize
-    name
-  rescue StandartError => e
-    puts e
-    retry
-  end
-
   def new_game
+    @interface.round_message
     @deck.shuffle_deck
     2.times { take_card(@player) }
     2.times { take_card(@dealer) }
@@ -40,32 +34,28 @@ class Menu
   end
 
   def see_hand(person, open = false)
-    return puts "В руке '#{@dealer.name}': #{'*' * @dealer.hand.cards.size}." if person.name == "Dealer" && open == false
+    return @interface.see_hand_crypto(@dealer.name, @dealer.hand.cards.size) if person.name == "Dealer" && open == false
 
-    puts "В руке '#{person.name}': #{person.see_cards}."
+    @interface.see_hand(person.name, person.see_cards)
   end
 
   def see_score(person)
-    puts "Очки '#{person.name}': #{person.score}."
+    @interface.see_score(person.name, person.score)
   end
 
   def user_move
     loop do
-      puts "#{@player.name}, ваш ход:"
-      puts "1. Открыть карты"
-      puts "2. Пропустить ход" if @player.add_card?
-      puts "3. Добавить карту" if @player.add_card?
-
-      choise = gets.chomp.to_i
+      choise = @interface.user_move_menu(@player.name, @player.add_card?)
 
       case choise
-      when 1 then open_cards
+      when 1
+        open_cards
       when 2
         dealer_move if @player.add_card?
       when 3
         add_card if @player.add_card?
       else
-        puts "Введите число согласно меню!"
+        @interface.wrong_number_menu
       end
     end
   end
@@ -102,41 +92,32 @@ class Menu
   def discover_winner
     if @player.score > @dealer.score && @player.good_score?
       @player.take_win_bet
-      puts_winner(@player)
+      @interface.see_winner(@player.name, @player.bank.quantity)
     elsif @dealer.score > @player.score && @dealer.good_score?
       @dealer.take_win_bet
-      puts_winner(@dealer)
+      @interface.see_winner(@dealer.name, @dealer.bank.quantity)
     elsif @player.score == @dealer.score && @player.good_score?
       @player.bet_back
       @dealer.bet_back
-      puts "Ничья."
+      @interface.see_draw
     else
-      puts "Игрок и дилер проиграли."
+      @interface.see_two_loosers
     end
 
     next_round
-  end
-
-  def puts_winner(person)
-    puts "'#{person.name}' победил в этом раунде, банк составляет '#{person.bank.quantity}'."
   end
 
   def next_round
     return empty_bank if @player.bank.quantity.zero? || @dealer.bank.quantity.zero?
 
     loop do
-      puts "
-#{@player.name}, сыграем еще?
-1. Да
-2. Нет/Выход из игры
-"
-      choice = gets.chomp.to_i
+      choice = @interface.next_game_menu(@player.name)
 
       case choice
       when 1 then new_round
       when 2 then exit
       else
-        puts "Введите число согласно меню!"
+        @interface.wrong_number_menu
       end
     end
   end
@@ -148,7 +129,7 @@ class Menu
       looser = @dealer.name
     end
 
-    puts "'#{looser}' ПРОИГРАЛ, закончились деньги. Выход из игры."
+    @interface.see_looser(looser)
     exit
   end
 
