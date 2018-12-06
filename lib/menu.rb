@@ -123,7 +123,7 @@ class Menu
   end
 
   def discover_winner
-    return :no_winner unless @player.good_score? && @dealer.good_score?
+    return :no_winner if !@player.good_score? && !@dealer.good_score?
 
     return :draw if @player.score == @dealer.score
 
