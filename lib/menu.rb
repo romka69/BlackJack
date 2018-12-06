@@ -30,7 +30,7 @@ class Menu
       @player.count_score
       @dealer.count_score
       see_score(@player)
-      
+
       user_move
     end
   end
@@ -62,15 +62,19 @@ class Menu
     loop do
       break if @next_round
 
-      choise = @interface.user_move_menu(@player.name, @player.hand.cards.size < 3)
+      choise = @interface.user_move_menu(@player.name)
 
       case choise
       when 1
+        user_add_card
+        dealer_move
         open_cards
       when 2
-        dealer_move if @player.hand.cards.size < 3
+        dealer_move
+        user_add_card if user_add_card?
+        open_cards
       when 3
-        add_card if @player.hand.cards.size < 3
+        open_cards
       else
         @interface.wrong_number_menu
       end
@@ -78,23 +82,31 @@ class Menu
   end
 
   def dealer_move
-    if @dealer.hand.cards.size < 3
+    if @dealer.add_card?
       take_card(@dealer)
       @dealer.count_score
+      @interface.card_add_in_hand(@dealer.name)
+    else
+      @interface.dealer_not_take_card(@dealer.name)
     end
 
     see_hand(@dealer)
   end
 
-  def add_card
-    return unless @player.hand.cards.size < 3
-
+  def user_add_card
     take_card(@player)
     @player.count_score
+    @interface.card_add_in_hand(@player.name)
     see_hand(@player)
   end
 
+  def user_add_card?
+    choise = @interface.user_move_menu(@player.name, true)
+    return true if choise == 1
+  end
+
   def open_cards
+    @interface.open_cards
     see_hand(@dealer, true)
     see_score(@dealer)
     see_hand(@player)
@@ -133,7 +145,7 @@ class Menu
 
     return :dealer unless @player.good_score?
 
-    return :player unless dealer.good_score?
+    return :player unless @dealer.good_score?
   end
 
   def next_round
@@ -152,13 +164,10 @@ class Menu
   end
 
   def empty_bank
-    if @player.bank.quantity.zero?
-      looser = @player.name
-    else
-      looser = @dealer.name
-    end
+    return @interface.see_looser(@player.name) if @player.bank.quantity.zero?
 
-    @interface.see_looser(looser)
+    return @interface.see_looser(@dealer.name) if @dealer.bank.quantity.zero?
+
     exit
   end
 end
