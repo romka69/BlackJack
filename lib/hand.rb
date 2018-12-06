@@ -14,10 +14,6 @@ class Hand
     @cards = []
   end
 
-  def add_card?
-    return true if @cards.size < 3
-  end
-
   def cards_in_line
     cards = []
     @cards.each { |card| cards << [card.val + card.suit] }

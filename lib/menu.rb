@@ -56,15 +56,15 @@ class Menu
     loop do
       break if @next_round
 
-      choise = @interface.user_move_menu(@player.name, @player.add_card?)
+      choise = @interface.user_move_menu(@player.name, @player.hand.cards.size < 3)
 
       case choise
       when 1
         open_cards
       when 2
-        dealer_move if @player.add_card?
+        dealer_move if @player.hand.cards.size < 3
       when 3
-        add_card if @player.add_card?
+        add_card if @player.hand.cards.size < 3
       else
         @interface.wrong_number_menu
       end
@@ -72,7 +72,7 @@ class Menu
   end
 
   def dealer_move
-    if @dealer.add_card?
+    if @dealer.hand.cards.size < 3
       take_card(@dealer)
       @dealer.count_score
     end
@@ -81,7 +81,7 @@ class Menu
   end
 
   def add_card
-    return unless @player.add_card?
+    return unless @player.hand.cards.size < 3
 
     take_card(@player)
     @player.count_score

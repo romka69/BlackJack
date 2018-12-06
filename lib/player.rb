@@ -34,10 +34,6 @@ class Player
     @hand.clear_hand
   end
 
-  def add_card?
-    @hand.add_card?
-  end
-
   def good_score?
     @hand.good_score?
   end
