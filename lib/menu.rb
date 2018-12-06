@@ -30,9 +30,7 @@ class Menu
       @player.count_score
       @dealer.count_score
       see_score(@player)
-      @player.place_bet
-      @dealer.place_bet
-
+      
       user_move
     end
   end
@@ -41,6 +39,8 @@ class Menu
     @deck = Deck.new
     @next_round = false
     @interface.round_message
+    @player.place_bet
+    @dealer.place_bet
   end
 
   def take_card(name)
