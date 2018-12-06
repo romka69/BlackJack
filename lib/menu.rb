@@ -7,7 +7,14 @@ class Menu
   def initialize
     @interface = Interface.new
     @interface.hello_message
-    @player = Player.new(@interface.input_name)
+
+    begin
+      @player = Player.new(@interface.input_name)
+    rescue StandardError => e
+      puts e
+      retry
+    end
+    
     @dealer = Dealer.new("Dealer")
     new_game
   end
