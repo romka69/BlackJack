@@ -14,7 +14,7 @@ class Menu
       puts e
       retry
     end
-    
+
     @dealer = Dealer.new("Dealer")
     new_game
   end
@@ -41,7 +41,6 @@ class Menu
     @deck = Deck.new
     @next_round = false
     @interface.round_message
-    @deck.shuffle_deck
   end
 
   def take_card(name)

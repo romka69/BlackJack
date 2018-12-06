@@ -8,6 +8,7 @@ class Deck
 
   def initialize
     @deck = create_deck
+    @deck.shuffle!
   end
 
   def create_deck
@@ -20,10 +21,6 @@ class Deck
     end
 
     arr_handler
-  end
-
-  def shuffle_deck
-    @deck.shuffle!
   end
 
   def give_card
