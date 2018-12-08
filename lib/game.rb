@@ -3,7 +3,7 @@ require_relative 'deck'
 require_relative 'player'
 require_relative 'dealer'
 
-class Menu
+class Game
   def initialize
     @interface = Interface.new
     @interface.hello_message
@@ -16,7 +16,6 @@ class Menu
     end
 
     @dealer = Dealer.new("Dealer")
-    new_game
   end
 
   def new_game
