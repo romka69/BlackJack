@@ -51,6 +51,7 @@ class Player
   end
 
   def validate!
-    raise "Имя не может быть пустым" if name.nil? || name.empty?
+    raise "Имя не может быть пустым!" if name.nil? || name.empty?
+    raise "Имя не может начиться с пробела!" if name[0] == " "
   end
 end
