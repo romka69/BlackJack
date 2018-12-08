@@ -1,6 +1,6 @@
 # Black Jack
 
-The Black Jack game written on `Ruby`, which is the final task of the "Ruby Basics" course from `Thinknetica`.
+The Black Jack game written on `Ruby`. This is the final task of the "Ruby Basics" course from [Thinknetica](https://thinknetica.com).
 
 Usage
 ---
