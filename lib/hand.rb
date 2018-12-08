@@ -15,9 +15,7 @@ class Hand
   end
 
   def cards_in_line
-    cards = []
-    @cards.each { |card| cards << [card.val + card.suit] }
-    cards.join(', ')
+    @cards.map { |card| card.val + card.suit }.join(', ')
   end
 
   def count_score
